@@ -1,18 +1,15 @@
 header{
-    height: 45px;
-    box-shadow: 0 0 8px rgba(0,0,0, .2);
+    height: 65px;
+    box-shadow: 0 1px 2px rgba(199,208,255, 1);
 }
-header img{
-    height: 40px;
-}
-header ul{
-    display: flex;
-}
-header li{
-    padding-right: 30px;
+a{
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
 .inner-container{
     width: 950px;
+    height: 100%;
     margin: 0 auto;
 }
 header .inner-container{
@@ -24,6 +21,13 @@ header .inner-container{
     width: 50%;
     margin: 20px auto;
     text-align: center;
+
+}
+.search-room-section > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 .room-list .inner-container{
     display: flex;

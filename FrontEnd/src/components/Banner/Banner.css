@@ -1,0 +1,39 @@
+.nav-container{
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    width: auto;
+    height: auto;
+    white-space: pre;
+    font-weight: 400;
+    font-style: normal;
+    font-family: "Audiowide", serif;
+    color: transparent;
+    background: linear-gradient(rgba(112,255,238,.68), rgba(255,82,200,.68));
+    background-clip: text;
+    -webkit-background-clip: text;
+    font-size: 25px;
+    letter-spacing: 0px;
+    line-height: 1.2;
+}
+.menu-items{
+    height: 100%;
+}
+.nav-container ul {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    gap: 20px;
+}
+.nav-container ul li {
+    padding: 15px 10px;
+}
+.active{
+    background-color: #C7D0FF;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
