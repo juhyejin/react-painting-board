@@ -1,62 +1,72 @@
-header{
-    height: 65px;
-    box-shadow: 0 1px 2px rgba(199,208,255, 1);
-}
-a{
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
+/*header{*/
+/*    height: 65px;*/
+/*    box-shadow: 0 1px 2px rgba(199,208,255, 1);*/
+/*}*/
+/*a{*/
+/*    color: #000;*/
+/*    text-decoration: none;*/
+/*    cursor: pointer;*/
+/*}*/
+/*.inner-container{*/
+/*    width: 950px;*/
+/*    height: 100%;*/
+/*    margin: 0 auto;*/
+/*}*/
+/*header .inner-container{*/
+/*    justify-content: space-between;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*}*/
+/*.search-room-section{*/
+/*    width: 50%;*/
+/*    margin: 20px auto;*/
+/*    text-align: center;*/
+
+/*}*/
+/*.search-room-section > div{*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    gap: 10px;*/
+/*}*/
+/*.room-list .inner-container{*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*}*/
+
+/*.room-list ul{*/
+/*    width: 50%;*/
+
+
+/*}*/
+/*.room-list ul li{*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*    box-shadow: 0 0 8px rgba(0,0,0, .2);*/
+/*    padding: 10px;*/
+/*    margin: 10px;*/
+/*    border-radius: 8px;*/
+/*}*/
+/*.paging{*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
+/*.paging-list{*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
+
 .inner-container{
     width: 950px;
     height: 100%;
     margin: 0 auto;
 }
-header .inner-container{
-    justify-content: space-between;
-    display: flex;
-    align-items: center;
-}
-.search-room-section{
-    width: 50%;
-    margin: 20px auto;
-    text-align: center;
+.contents{
+    margin-top:70px;
 
-}
-.search-room-section > div{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-.room-list .inner-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.room-list ul{
-    width: 50%;
-
-
-}
-.room-list ul li{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 0 8px rgba(0,0,0, .2);
-    padding: 10px;
-    margin: 10px;
-    border-radius: 8px;
-}
-.paging{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.paging-list{
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }

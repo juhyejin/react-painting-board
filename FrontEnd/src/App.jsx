@@ -1,25 +1,24 @@
 
 import './App.css'
-import Banner from "./components/Banner/Banner.jsx";
 import {BrowserRouter, Outlet, Route, Routes} from "react-router-dom";
 import DrawingListPage from "./pages/DrawingListPage.jsx";
 import SettingPage from "./pages/SettingPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import DrawRoomPage from "./pages/DrawRoomPage.jsx";
+import Header from "@/components/Organism/Header/Header.jsx";
 
 function App() {
 
   const LayOut = () =>{
     return (
       <div>
-        <Banner/>
-        <div className="inner-container">
+        <Header/>
+        <div className="inner-container contents">
           <Outlet />
         </div>
       </div>
     )
   }
-
 
   return (
     <div className="App">

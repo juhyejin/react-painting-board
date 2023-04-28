@@ -1,9 +1,8 @@
 import {useNavigate, useParams} from "react-router-dom";
-import useBack from "../hooks/useBack.jsx";
 import {socket} from "../server.jsx";
 
 const DrawRoomPage = () => {
-  const{roomName} = useParams();
+  const { roomName } = useParams();
   const navigate = useNavigate();
 
   const handleClick = () =>{

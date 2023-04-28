@@ -1,14 +1,12 @@
-import Btn from "../components/button/Btn.jsx";
-import Input from "../components/input/Input.jsx";
-import Icons from "../components/icons/Icons.jsx";
+import Input from "../components/Atom/Input/Input.jsx";
+import Icons from "../components/Atom/Icons/Icons.jsx";
 import styled from "styled-components";
-import NewRoom from "../components/NewRoom/NewRoom.jsx";
 import {useEffect, useState} from "react";
 import {socket} from "../server.jsx";
 import {useNavigate} from "react-router-dom";
+import NewRoomModal from "@/components/Organism/NewRoomModal/NewRoomModal.jsx";
 
 const DrawingListPage = () => {
-  const [count, setCount] = useState(0);
   const [isSearchForm, setIsSearchForm] = useState(false);
   const [isNewRoom, setIsNewRoom] = useState(false);
   const [roomList, setRoomList] = useState([]);
@@ -59,11 +57,13 @@ const DrawingListPage = () => {
     setIsSearchForm(false);
     setIsRoomList([...roomList])
   }
-
+  const clickNewRoomModalClose = () =>{
+    setIsNewRoom(false)
+  }
 
   return (
     <>
-      <NewRoom newRoom={isNewRoom} _onClickClose={()=>setIsNewRoom(false)}/>
+      <NewRoomModal isNewRoom={isNewRoom} clickClose={clickNewRoomModalClose}></NewRoomModal>
     <section className="search-room-section">
       {
         isSearchForm ?
@@ -75,14 +75,14 @@ const DrawingListPage = () => {
                   <Icons name={'closeIcon'} width={15} propsClassName={"searchIcon"}></Icons>
                 </div>
               </SearchDiv>
-              <Btn btnType={'submit'} BtnName={"검색"}></Btn>
+              {/*<Btn btnType={'submit'} BtnName={"검색"}></Btn>*/}
             </SearchForm>
           ) :
           (
             <div>
-              <Btn IconName={'searchIcon'} clickEvent={() => setIsSearchForm(true)}/>
-              <Btn IconName={'plusIcon'} clickEvent={()=> setIsNewRoom(true)}/>
-              <Btn IconName={'fastForwardIcon'} />
+              {/*<Btn IconName={'searchIcon'} clickEvent={() => setIsSearchForm(true)}/>*/}
+              {/*<Btn IconName={'plusIcon'} clickEvent={()=> setIsNewRoom(true)}/>*/}
+              {/*<Btn IconName={'fastForwardIcon'} />*/}
             </div>
           )
       }
@@ -126,7 +126,7 @@ const SearchForm = styled.form`
   display: flex;
   justify-content: center;
   align-items: center;
- gap: 10px;
+  gap: 10px;
  
 `
 const SearchDiv = styled.div`

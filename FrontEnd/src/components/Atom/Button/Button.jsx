@@ -1,8 +1,4 @@
-import React from 'react';
 import styled, {css} from "styled-components";
-import Icons from "../icons/Icons.jsx";
-import {Button} from "../../stories/Button.jsx";
-import PropTypes from "prop-types";
 
 const SIZES = {
   icon: css`
@@ -23,7 +19,7 @@ const SIZES = {
   lg: css`
     --button-font-size: 20px;
     --button-padding: 16px 20px;
-    --button-radius: 12pxpx;
+    --button-radius: 12px;
   `
 }
 
@@ -35,10 +31,10 @@ const VARIANTS = {
   `
 }
 
-const StyleBtn = styled.button`
+const Btn = styled.button`
   ${(props) => props.sizeStyle}
   ${(props) => props.variantStyle}
-  
+
   box-shadow: 0 1px 2px rgba(0,0,0,.25) ;
   outline: none;
   border: 0;
@@ -47,32 +43,34 @@ const StyleBtn = styled.button`
   font-size: var(--button-font-size, 1rem);
   padding: var(--button-padding, 10px 13px);
   border-radius: var(--button-radius, 8px);
-  
+
   &:active,
   &:hover,
   &:focus{
     background: var(--button-hover-bg-color, #F9B3BB);
-    color: var(--button-hover-color, #FFF); 
+    color: var(--button-hover-color, #FFF);
   }
 `
 
-const Btn = ({btnType,IconName, BtnName, clickEvent, size, variant, ...props}) => {
-  IconName ? size = 'icon' : ''
+const Button = ({type, onClick, btnInner, size, variant}) =>{
   const sizeStyle = SIZES[size]
   const variantStyle = VARIANTS[variant];
 
   return (
-    <StyleBtn type={btnType} onClick={clickEvent} sizeStyle={sizeStyle}  {...props}>
-      {IconName && <Icons name={IconName}/>}
-      {BtnName}
-    </StyleBtn>
-  );
+    <Btn type={type} onClick={onClick} sizeStyle={sizeStyle} variantStyle={variantStyle}>
+      { btnInner }
+    </Btn>
+  )
 };
 
-Btn.defaultProps = {
-  btnType: 'button',
-  btnName: 'Button'
+Button.defaultProps = {
+  type: 'button',
+  btnInner: 'button',
+  size: 'sm',
+  variant: '',
+  onClick : () => {}
 }
 
+export default Button
 
-export default Btn;
+
