@@ -1,8 +1,10 @@
 import styled from "styled-components";
 
-const Input = ({placeholder}) =>{
+const Input = (props) =>{
+  const {placeholder, _onChange} = props;
+
   return (
-    <InputComponent placeholder={placeholder}/>
+    <InputComponent placeholder={placeholder} onChange={_onChange}/>
   )
 }
 

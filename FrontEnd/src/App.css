@@ -38,13 +38,17 @@ header .inner-container{
 
 .room-list ul{
     width: 50%;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 8px;
+
+
+}
+.room-list ul li{
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 0 8px rgba(0,0,0, .2);
+    padding: 10px;
+    margin: 10px;
+    border-radius: 8px;
 }
 .paging{
     display: flex;

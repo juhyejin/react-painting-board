@@ -3,18 +3,43 @@ import Input from "../input/Input.jsx";
 import Icons from "../icons/Icons.jsx";
 import Btn from "../button/Btn.jsx";
 import {useEffect, useState} from "react";
+import {socket} from "../../server.jsx";
+import {useNavigate} from "react-router-dom";
 
-const NewRoom = ({newRoom,closeNewRoom }) => {
+const NewRoom = ({newRoom, _onClickClose}) => {
 
+  const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    const check = ()=>{
+      alert('이미 존재하는 방입니다.')
+    }
+    socket.on('existence-room',check)
+    return () => {
+      socket.off('existence-room',check)
+    };
+  }, []);
+
+  const handleChange = (e) => {
+    setInputValue(e.target.value)
+  }
+  const pushRoom = () =>{
+    navigate(`/room/${inputValue}`)
+  }
+  const handleSubmit = (e)=> {
+    e.preventDefault();
+    socket.emit('create-room',inputValue,pushRoom);
+  }
 
   return (
     <>
     {newRoom &&  (
       <Overlay>
         <Card>
-          <form>
-            <Input placeholder={'방이름을 입력해주세요.'}/>
-            <div onClick={closeNewRoom}>
+          <form onSubmit={handleSubmit}>
+            <Input placeholder={'방이름을 입력해주세요.'} _onChange={handleChange}/>
+            <div onClick={_onClickClose}>
               <Icons name={'closeIcon'} width={15} propsClassName={"searchIcon"} ></Icons>
             </div>
             <Btn btnType="submit" BtnName={'생성'}></Btn>

@@ -1,30 +1,77 @@
 import Btn from "../components/button/Btn.jsx";
 import Input from "../components/input/Input.jsx";
 import Icons from "../components/icons/Icons.jsx";
-import {useState} from "react";
 import styled from "styled-components";
 import NewRoom from "../components/NewRoom/NewRoom.jsx";
+import {useEffect, useState} from "react";
+import {socket} from "../server.jsx";
+import {useNavigate} from "react-router-dom";
 
 const DrawingListPage = () => {
   const [count, setCount] = useState(0);
   const [isSearchForm, setIsSearchForm] = useState(false);
   const [isNewRoom, setIsNewRoom] = useState(false);
+  const [roomList, setRoomList] = useState([]);
+  const [isRoomList, setIsRoomList] = useState([]);
+  const [searchInputValue, setSearchInputValue] = useState('');
+  const navigate = useNavigate();
 
-  const closeNewRoom = () =>{
-    setIsNewRoom(false)
+  useEffect(() => {
+    const getRooms = (rooms)=>{
+      setRoomList(rooms);
+    };
+    const creatRoom = (rooms)=>{
+      setRoomList(rooms);
+    }
+    socket.emit('get-rooms',getRooms);
+    socket.on('room-list',creatRoom);
+    return () => {
+      socket.off('get-rooms',getRooms);
+      socket.off('room-list',creatRoom);
+    };
+  }, []);
+
+  useEffect(() => {
+    setIsRoomList(roomList.slice())
+  }, [roomList]);
+
+  useEffect(() => {
+    if(searchInputValue.length === 0){
+      setIsRoomList([...roomList])
+    }else {
+      const searchRoom = roomList.filter((x) => x.indexOf(searchInputValue) > -1)
+      setIsRoomList(searchRoom)
+    }
+  }, [searchInputValue]);
+
+
+  const enterRoom = (roomName) =>{
+    const pushRoom = () =>{
+      navigate(`/room/${roomName}`)
+    }
+    socket.emit('enter-room',roomName,pushRoom)
   }
+  const changeSearchInput = (e) =>{
+    setTimeout(() => setSearchInputValue(e.target.value),500)
+
+  }
+  const handleReSet = () =>{
+    setIsSearchForm(false);
+    setIsRoomList([...roomList])
+  }
+
 
   return (
     <>
-      <NewRoom newRoom={isNewRoom} closeNewRoom={closeNewRoom}/>
+      <NewRoom newRoom={isNewRoom} _onClickClose={()=>setIsNewRoom(false)}/>
     <section className="search-room-section">
       {
         isSearchForm ?
           (
             <SearchForm>
               <SearchDiv>
-                <Input placeholder={'방이름을 입력해주세요.'}/>
-                <div onClick={() => setIsSearchForm(false)}>
+                <Input placeholder={'방이름을 입력해주세요.'} _onChange={changeSearchInput}/>
+                <div onClick={handleReSet}>
                   <Icons name={'closeIcon'} width={15} propsClassName={"searchIcon"}></Icons>
                 </div>
               </SearchDiv>
@@ -42,28 +89,20 @@ const DrawingListPage = () => {
     </section>
   <section className="room-list">
     <div className="inner-container">
-      <ul>
-        <li>
-          방이름
-        </li>
-        <li>
-          입장 멤버 수 /  총 멤버 수
-        </li>
-        <li>
-          <button>입장하기</button>
-        </li>
-      </ul>
-      <ul>
-        <li>
-          방이름
-        </li>
-        <li>
-          입장 멤버 수 /  총 멤버 수
-        </li>
-        <li>
-          <button>입장하기</button>
-        </li>
-      </ul>
+        { isRoomList.length >=1 ? (
+          <ul>
+            {isRoomList.map((x,index) => (
+                <li key={index}>
+                  <div>
+                    {x}
+                  </div>
+                  <div>
+                    입장 멤버 수 /  총 멤버 수
+                  </div>
+                    <button onClick={()=>enterRoom(x)}>입장하기</button>
+                </li>
+              ))}
+          </ul>): <> 아직 만들어진 방이 없어요! 방을 생성해주세요 </>}
     </div>
   </section>
   <div className="paging inner-container">
