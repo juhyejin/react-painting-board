@@ -4,17 +4,29 @@ import styled from "styled-components";
 import useForm from "@/hooks/useForm.jsx";
 import {socket} from "@/server.jsx";
 import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 
 const NewRoomModal = ({isNewRoom,clickClose}) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const alertNewRoom = () =>{
+      alert('이미 존재하는 방입니다.')
+    }
+    socket.on('existence-room',alertNewRoom )
+    return () => {
+      socket.off('existence-room',alertNewRoom )
+    };
+  }, []);
+
 
   const{ values, handleChange, handleSubmit } = useForm({
     initValues:{
       roomName :''
     },
     onSubmit: () => {
-      socket.emit('create-room',values,()=>{
+      socket.emit('create-room',values.roomName,()=>{
         navigate(`/room/${values.roomName}`)
       });
     }
@@ -24,7 +36,7 @@ const NewRoomModal = ({isNewRoom,clickClose}) => {
     <>
       {isNewRoom &&
         <Modal clickClose={clickClose}>
-          <FormInputGroup btnInner='생성' name='roomName' onSubmit={handleSubmit} onChange={handleChange}/>
+          <FormInputGroup btnInner='생성'  name='roomName' onSubmit={handleSubmit} onChange={handleChange}/>
         </Modal>
       }
     </>

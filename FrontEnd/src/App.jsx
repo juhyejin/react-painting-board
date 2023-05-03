@@ -6,8 +6,24 @@ import SettingPage from "./pages/SettingPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import DrawRoomPage from "./pages/DrawRoomPage.jsx";
 import Header from "@/components/Organism/Header/Header.jsx";
+import {useEffect, useState} from "react";
+import {socket} from "@/server.jsx";
 
 function App() {
+
+  // const [nickName, setNickName] = useState('');
+
+  useEffect(() => {
+    socket.on('random-nick',(nickName)=>{
+      // setNickName(nickName)
+      localStorage.setItem('userNickName',nickName)
+    });
+
+    return () => {
+      socket.off('random-nick')
+    };
+  }, []);
+
 
   const LayOut = () =>{
     return (

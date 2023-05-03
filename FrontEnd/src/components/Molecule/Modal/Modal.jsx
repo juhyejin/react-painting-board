@@ -24,6 +24,7 @@ const Overlay = styled.div`
   left: 0;
   height: 100%;
   width: 100%;
+  z-index: 5;
  `
 const Card = styled.div`
   width: fit-content;

@@ -1,118 +1,111 @@
-import Input from "../components/Atom/Input/Input.jsx";
 import Icons from "../components/Atom/Icons/Icons.jsx";
 import styled from "styled-components";
 import {useEffect, useState} from "react";
 import {socket} from "../server.jsx";
 import {useNavigate} from "react-router-dom";
 import NewRoomModal from "@/components/Organism/NewRoomModal/NewRoomModal.jsx";
+import ButtonGroup from "@/components/Molecule/ButtonGroup/ButtonGroup.jsx";
+import FormInputGroup from "@/components/Molecule/FormInputGroup/FormInputGroup.jsx";
+import RoomCard from "@/components/Molecule/RoomCard/RoomCard.jsx";
+import useForm from "@/hooks/useForm.jsx";
+import useDebounce from "@/hooks/useDebounce.jsx";
 
 const DrawingListPage = () => {
   const [isSearchForm, setIsSearchForm] = useState(false);
-  const [isNewRoom, setIsNewRoom] = useState(false);
+  const [isNewRoomModal, setIsNewRoomModal] = useState(false);
   const [roomList, setRoomList] = useState([]);
-  const [isRoomList, setIsRoomList] = useState([]);
-  const [searchInputValue, setSearchInputValue] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const getRooms = (rooms)=>{
       setRoomList(rooms);
     };
-    const creatRoom = (rooms)=>{
-      setRoomList(rooms);
-    }
-    socket.emit('get-rooms',getRooms);
-    socket.on('room-list',creatRoom);
+    socket.on('room-list',getRooms);
     return () => {
-      socket.off('get-rooms',getRooms);
-      socket.off('room-list',creatRoom);
+      socket.off('room-list',getRooms);
     };
   }, []);
 
+
+  const{ values, handleChange, handleSubmit } = useForm({
+    initValues:{
+      searchValue:''
+    },
+    onSubmit: () => {}
+  })
+
+  const searchRoom = useDebounce(values.searchValue,500);
   useEffect(() => {
-    setIsRoomList(roomList.slice())
-  }, [roomList]);
-
-  useEffect(() => {
-    if(searchInputValue.length === 0){
-      setIsRoomList([...roomList])
-    }else {
-      const searchRoom = roomList.filter((x) => x.indexOf(searchInputValue) > -1)
-      setIsRoomList(searchRoom)
-    }
-  }, [searchInputValue]);
+      socket.emit('search-rooms',searchRoom)
+  }, [searchRoom]);
 
 
-  const enterRoom = (roomName) =>{
+  const joinRoom = (roomName) =>{
     const pushRoom = () =>{
       navigate(`/room/${roomName}`)
     }
-    socket.emit('enter-room',roomName,pushRoom)
+    socket.emit('join-room',roomName,pushRoom)
   }
-  const changeSearchInput = (e) =>{
-    setTimeout(() => setSearchInputValue(e.target.value),500)
 
-  }
-  const handleReSet = () =>{
-    setIsSearchForm(false);
-    setIsRoomList([...roomList])
-  }
-  const clickNewRoomModalClose = () =>{
-    setIsNewRoom(false)
+  const ButtonGroupInfo = [
+    {
+      iconName: 'searchIcon',
+      onClick: () => {
+        setIsSearchForm(true)
+      }
+    },
+    {
+      iconName: 'plusIcon',
+      onClick: () =>{
+        setIsNewRoomModal(true)
+      }
+    },
+    {
+      iconName: 'fastForwardIcon',
+      onClick: () =>{
+        console.log('랜덤 방 들어가기')
+      }
+    },
+  ]
+
+  const FormStyleOfFormInputGroup = {
+    boxShadow: '0 1px 3px rgba(0,0,0,.25)',
+    padding: '5px 20px',
+    borderRadius: '10px'
   }
 
   return (
     <>
-      <NewRoomModal isNewRoom={isNewRoom} clickClose={clickNewRoomModalClose}></NewRoomModal>
-    <section className="search-room-section">
-      {
-        isSearchForm ?
-          (
-            <SearchForm>
+      <NewRoomModal isNewRoom={isNewRoomModal} clickClose={()=>setIsNewRoomModal(false)}></NewRoomModal>
+      <section className="room-control-section">
+        {
+          isSearchForm ?
+            (
               <SearchDiv>
-                <Input placeholder={'방이름을 입력해주세요.'} _onChange={changeSearchInput}/>
-                <div onClick={handleReSet}>
-                  <Icons name={'closeIcon'} width={15} propsClassName={"searchIcon"}></Icons>
-                </div>
+                <FormInputGroup btnInner='찾기' notBtn={true} name="searchValue" formStyle={FormStyleOfFormInputGroup} onSubmit={handleSubmit} onChange={handleChange}/>
+                <IconBox onClick={()=>setIsSearchForm(false)}>
+                  <Icons name='closeIcon'/>
+                </IconBox>
               </SearchDiv>
-              {/*<Btn btnType={'submit'} BtnName={"검색"}></Btn>*/}
-            </SearchForm>
-          ) :
-          (
-            <div>
-              {/*<Btn IconName={'searchIcon'} clickEvent={() => setIsSearchForm(true)}/>*/}
-              {/*<Btn IconName={'plusIcon'} clickEvent={()=> setIsNewRoom(true)}/>*/}
-              {/*<Btn IconName={'fastForwardIcon'} />*/}
-            </div>
-          )
-      }
-    </section>
-  <section className="room-list">
-    <div className="inner-container">
-        { isRoomList.length >=1 ? (
-          <ul>
-            {isRoomList.map((x,index) => (
-                <li key={index}>
-                  <div>
-                    {x}
-                  </div>
-                  <div>
-                    입장 멤버 수 /  총 멤버 수
-                  </div>
-                    <button onClick={()=>enterRoom(x)}>입장하기</button>
-                </li>
-              ))}
-          </ul>): <> 아직 만들어진 방이 없어요! 방을 생성해주세요 </>}
-    </div>
-  </section>
-  <div className="paging inner-container">
-    <div className="prev">이전</div>
-    <ul className="paging-list">
-      <li>1</li>
-      <li>2</li>
-    </ul>
-    <div className="next">다음</div>
-  </div>
+            ) :
+            (
+              <ButtonGroup btnItems={ButtonGroupInfo}/>
+            )
+        }
+      </section>
+      <section className="room-list-section">
+        <ul>
+          {roomList.length >= 1 ? (
+              roomList.map((room,index)=>(
+                <LiForRoomList key={index} >
+                  <RoomCard roomName={room} onClick={()=>joinRoom(room)}/>
+                </LiForRoomList>
+              ))
+            ):
+            <>아직 방이 없습니다.</>}
+        </ul>
+      </section>
     </>
   )
 }
@@ -120,29 +113,20 @@ const DrawingListPage = () => {
 
 export default DrawingListPage
 
-
-const SearchForm = styled.form`
-  position : relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
- 
+const SearchDiv = styled.div `
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
 `
-const SearchDiv = styled.div`
-  padding: 0 20px;
-  border: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,.25);
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-`
-
 const IconBox = styled.div`
-  position : absolute;
+  position: absolute;
   top: 50%;
-  right: 10px;
+  right: 25px;
+  cursor: pointer;
   transform: translateY(-50%);
+`
+const LiForRoomList = styled.li`
+  margin: 10px 0;
 `
