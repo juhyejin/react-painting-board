@@ -6,7 +6,14 @@ const SVG = {
   enterIcon :  React.lazy(() => import('../../../assets/svgs/enter.svg')),
   closeIcon : React.lazy(()=> import('../../../assets/svgs/close.svg')),
   fastForwardIcon: React.lazy(()=> import('../../../assets/svgs/fast-forward.svg')),
-  caretRightIcon: React.lazy(()=>import('../../../assets/svgs/caret-right.svg'))
+  caretRightIcon: React.lazy(()=>import('../../../assets/svgs/caret-right.svg')),
+  brushIcon : React.lazy(()=>import('../../../assets/svgs/brush.svg')),
+  circleIcon : React.lazy(()=>import('../../../assets/svgs/circle.svg')),
+  eraserIcon : React.lazy(()=>import('../../../assets/svgs/eraser.svg')),
+  paintBucketIcon : React.lazy(()=>import('../../../assets/svgs/paint-bucket.svg')),
+  paletteIcon: React.lazy(()=>import('../../../assets/svgs/palette.svg')),
+  randomIcon : React.lazy(()=>import('../../../assets/svgs/random.svg')),
+  squareIcon : React.lazy(()=>import('../../../assets/svgs/square.svg'))
 }
 
 const Icons = ({name, width, height, propsClassName}) => {
