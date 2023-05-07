@@ -13,7 +13,8 @@ const SVG = {
   paintBucketIcon : React.lazy(()=>import('../../../assets/svgs/paint-bucket.svg')),
   paletteIcon: React.lazy(()=>import('../../../assets/svgs/palette.svg')),
   randomIcon : React.lazy(()=>import('../../../assets/svgs/random.svg')),
-  squareIcon : React.lazy(()=>import('../../../assets/svgs/square.svg'))
+  squareIcon : React.lazy(()=>import('../../../assets/svgs/square.svg')),
+  exitIcon : React.lazy(()=>import('../../../assets/svgs/exit.svg'))
 }
 
 const Icons = ({name, width, height, propsClassName}) => {
