@@ -30,19 +30,19 @@ const VARIANTS = {
     --button-bg-color: #dc3545;
     --button-hover-bg-color: #218838;
   `,
-  active: css`
+  game: css`
     --button-box-shadow : 0 10px 0 rgba(0,0,0,.25);
     --button-hover-box-shadow : 0 4px 0 #e87988;
     --transform-translateY : 6px;
   `
 }
 
-const Button = ({type, onClick, btnInner, size, variant}) =>{
+const Button = ({type, onClick, btnInner, size, variant, className}) =>{
   const sizeStyle = SIZES[size]
   const variantStyle = VARIANTS[variant];
 
   return (
-    <Btn type={type} onClick={onClick} sizeStyle={sizeStyle} variantStyle={variantStyle}>
+    <Btn type={type} className={className} onClick={onClick} sizeStyle={sizeStyle} variantStyle={variantStyle}>
       {btnInner}
     </Btn>
   )
@@ -72,6 +72,12 @@ const Btn = styled.button`
   border-radius: var(--button-radius, 8px);
   box-sizing: border-box;
   transition: .1s;
+
+  &.active{
+    background: #F9B3BB;
+    color: #FFF;
+    border-color: transparent;
+  }
   
   &:hover{
     background: var(--button-hover-bg-color, #F9B3BB);
@@ -80,4 +86,5 @@ const Btn = styled.button`
     box-shadow: var(--button-hover-box-shadow) ;
     transform: translateY(var(--transform-translateY));
   }
+  
 `

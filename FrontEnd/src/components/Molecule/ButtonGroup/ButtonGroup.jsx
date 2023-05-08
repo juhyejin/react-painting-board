@@ -1,16 +1,31 @@
 import styled from "styled-components";
 import Button from "@/components/Atom/Button/Button.jsx";
 import Icons from "@/components/Atom/Icons/Icons.jsx";
+import {useState} from "react";
 
-const ButtonGroup = ({btnItems}) => {
+const ButtonGroup = ({btnItems,variant, useActive}) => {
+
+  const [btnIndex, setBtnIndex] = useState(0);
+
+
+  const handleClick = (btnInfo)=>{
+    if(useActive){
+      const activeBtn = btnItems.findIndex((btn)=>btn === btnInfo)
+      setBtnIndex(activeBtn);
+      btnInfo.onClick()
+    }else{
+      btnInfo.onClick()
+    }
+  }
 
   return (
     <BtnGroupBox>
       {btnItems.map((btnInfo,index)=>(
         <Button key={index}
                 btnInner={<Icons name={btnInfo.iconName}/>}
-                onClick={btnInfo.onClick}
-                variant='active'
+                onClick={()=> handleClick(btnInfo)}
+                variant={variant}
+                className={index === btnIndex ? 'active' : ''}
         >
         </Button>
       ))}
@@ -24,7 +39,5 @@ const BtnGroupBox = styled.div`
   display: grid;
   grid-template-columns: repeat(3 , 1fr);
   gap: 10px;
-  max-width: 20%;
-  margin: 0 auto;
   padding: 20px;
 `

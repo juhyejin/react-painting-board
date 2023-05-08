@@ -90,7 +90,9 @@ const DrawingListPage = () => {
               </SearchDiv>
             ) :
             (
-              <ButtonGroup btnItems={ButtonGroupInfo}/>
+              <ButtonBox>
+                <ButtonGroup btnItems={ButtonGroupInfo} variant={'active'}/>
+              </ButtonBox>
             )
         }
       </section>
@@ -129,4 +131,8 @@ const IconBox = styled.div`
 `
 const LiForRoomList = styled.li`
   margin: 10px 0;
+`
+const ButtonBox = styled.div`
+  width: 20%;
+  margin: 0 auto;
 `
