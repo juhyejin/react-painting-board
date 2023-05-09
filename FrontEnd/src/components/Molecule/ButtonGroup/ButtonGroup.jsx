@@ -3,7 +3,7 @@ import Button from "@/components/Atom/Button/Button.jsx";
 import Icons from "@/components/Atom/Icons/Icons.jsx";
 import {useState} from "react";
 
-const ButtonGroup = ({btnItems,variant, useActive}) => {
+const ButtonGroup = ({btnItems,variant, useActive,...props}) => {
 
   const [btnIndex, setBtnIndex] = useState(0);
 
@@ -23,9 +23,11 @@ const ButtonGroup = ({btnItems,variant, useActive}) => {
       {btnItems.map((btnInfo,index)=>(
         <Button key={index}
                 btnInner={<Icons name={btnInfo.iconName}/>}
-                onClick={()=> handleClick(btnInfo)}
+                onClick={()=>handleClick(btnInfo)}
                 variant={variant}
                 className={index === btnIndex ? 'active' : ''}
+                name={btnInfo.name}
+                {...props}
         >
         </Button>
       ))}

@@ -3,7 +3,7 @@ import Input from "@/components/Atom/Input/Input.jsx";
 import Button from "@/components/Atom/Button/Button.jsx";
 import styled from "styled-components";
 
-const FormInputGroup = ({formStyle,btnInner,onSubmit,onChange,name, notBtn}) => {
+const FormInputGroup = ({formStyle,btnInner,onSubmit,onChange,name, notBtn, ...props}) => {
 
   const inputStyle = {
     height: '20px',
@@ -13,9 +13,8 @@ const FormInputGroup = ({formStyle,btnInner,onSubmit,onChange,name, notBtn}) => 
 
   return (
     <Form onSubmit={onSubmit} style={formStyle}>
-      <Input style={inputStyle} name={name} required={true} placeholder='방 이름을 적어주세요.' onChange={onChange}></Input>
-      {!notBtn && <Button type={'submit'} btnInner={btnInner}></Button>}
-
+      <Input style={inputStyle} name={name} required={true} onChange={onChange} {...props}></Input>
+      {!notBtn && <Button type={'submit'} btnInner={btnInner} {...props}></Button>}
     </Form>
   )
 }

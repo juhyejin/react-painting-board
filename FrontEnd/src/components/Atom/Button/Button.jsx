@@ -37,12 +37,12 @@ const VARIANTS = {
   `
 }
 
-const Button = ({type, onClick, btnInner, size, variant, className}) =>{
+const Button = ({type, onClick, btnInner, size, variant, className,...props}) =>{
   const sizeStyle = SIZES[size]
   const variantStyle = VARIANTS[variant];
 
   return (
-    <Btn type={type} className={className} onClick={onClick} sizeStyle={sizeStyle} variantStyle={variantStyle}>
+    <Btn type={type} className={className} onClick={onClick} sizeStyle={sizeStyle} variantStyle={variantStyle} {...props}>
       {btnInner}
     </Btn>
   )

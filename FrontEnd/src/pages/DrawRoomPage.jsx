@@ -5,114 +5,150 @@ import Button from "@/components/Atom/Button/Button.jsx";
 import ButtonGroup from "@/components/Molecule/ButtonGroup/ButtonGroup.jsx";
 import Icons from "@/components/Atom/Icons/Icons.jsx";
 import {useEffect, useRef, useState} from "react";
+import Input from "@/components/Atom/Input/Input.jsx";
+import FormInputGroup from "@/components/Molecule/FormInputGroup/FormInputGroup.jsx";
+import useForm from "@/hooks/useForm.jsx";
 
 const DrawRoomPage = () => {
   const { roomName } = useParams();
   const navigate = useNavigate();
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [brushType, setBrushType] = useState('circle');
   const canvasRef = useRef(null);
-  const [ctx, setCtx] = useState();
 
+  const{ values, handleChange, handleSubmit } = useForm({
+    initValues:{
+      message:''
+    },
+    onSubmit : ()=>{
+
+    }
+  })
+
+  const [brushInfo, setBrushInfo] = useState({
+    brushSize : 10,
+    brushType : 'circle',
+    brushColor : '#000'
+  });
   useEffect(() => {
-    const canvas = canvasRef.current
-    const context = canvas.getContext('2d')
+    const canvas = canvasRef.current.getContext('2d')
 
-    canvas.width= '500'
-    canvas.height = '500'
+    canvas.lineJoin = 'round'
+    canvas.strokeStyle = brushInfo.brushColor
+    canvas.fillStyle = brushInfo.brushColor
 
-    context.lineJoin = 'round'
-    context.strokeStyle = 'blue'
-    context.fillStyle = 'pink'
-    setCtx(context);
-  }, []);
-
-
-  const handleClick = () =>{
+  }, [brushInfo.brushColor]);
+  const outRoom = () =>{
     socket.emit('leave-room',roomName)
     navigate(-1)
   }
+  const handleMouseMove = (event) => {
+    const {offsetX,offsetY} = event.nativeEvent;
 
-  const BtnGroup = [{
-      iconName: 'circleIcon',
-      onClick : () =>{
-        setBrushType('circle')
-      }
-    },{
-      iconName: 'squareIcon',
-      onClick : () =>{
-        setBrushType('square')
-      }
-    },{
-      iconName: 'eraserIcon',
-      onClick : () =>{
-        setBrushType('eraser')
-      }
-    },{
-      iconName: 'paintBucketIcon',
-      onClick : () =>{
-        setBrushType('paint')
-      }
-      },{
-        iconName: 'paletteIcon',
-        onClick : () =>{
-          console.log('palette')
-        }
-      }
-  ]
-
-  const handleMouseMove = ({nativeEvent}) => {
-    const {offsetX,offsetY} = nativeEvent;
+    const canvasContext = canvasRef.current.getContext("2d")
 
     if(isMouseDown){
-      switch (brushType){
+      switch (brushInfo.brushType){
         case 'circle':
-          ctx.beginPath();
-          ctx.arc(offsetX, offsetY,10,0, Math.PI*2);
-          ctx.closePath();
-          ctx.fill();
+          canvasContext.beginPath();
+          canvasContext.arc(offsetX, offsetY,brushInfo.brushSize/2, 0, Math.PI*2);
+          canvasContext.closePath();
+          canvasContext.fill();
           break
         case 'square' :
-          ctx.fillRect(offsetX - 10 / 2, offsetY - 10 / 2, 10, 10);
+          canvasContext.fillRect(offsetX - brushInfo.brushSize / 2, offsetY - brushInfo.brushSize / 2, brushInfo.brushSize, brushInfo.brushSize);
           break
         case 'paint' :
-          ctx.fillRect(0,0, 500, 500);
+          canvasContext.fillRect(0,0, 500, 500);
           break
         case 'eraser':
-          ctx.clearRect(offsetX - 10/2,offsetY - 10/2, 10, 10);
+          canvasContext.clearRect(offsetX - brushInfo.brushSize/2,offsetY - brushInfo.brushSize/2, brushInfo.brushSize, brushInfo.brushSize);
           break
       }
-
     }
   }
-
-  const mouseupDown = (val) =>{
+  const handelMouseupDown = (val) =>{
     setIsMouseDown(val)
   }
+  const changeBrushType = (brushName)=>{
+    setBrushInfo((prevState)=>({
+      ...prevState,
+      brushType: brushName
+    }))
+  }
+  const changeBrushSize = (event) =>{
+    setBrushInfo((prevState)=>({
+      ...prevState,
+      brushSize: event.target.value
+    }))
+  }
+  const changeBrushColor =(event)=>{
+    setBrushInfo((prevState)=>({
+      ...prevState,
+      brushColor: event.target.value
+    }))
+  }
+
+  const BtnGroup = [{
+    name:'circle',
+    iconName: 'circleIcon',
+    onClick : function () {changeBrushType(this.name)}
+  },{
+    name:'square',
+    iconName: 'squareIcon',
+    onClick : function () {changeBrushType(this.name)}
+  },{
+    name:'eraser',
+    iconName: 'eraserIcon',
+    onClick : function () {changeBrushType(this.name)}
+  },{
+    name:'paint',
+    iconName: 'paintBucketIcon',
+    onClick : function () {changeBrushType(this.name)}
+  }]
+
   return (
     <MainContainer>
       <RoomHeader>
         <div>
           {roomName}
         </div>
-        <Button btnInner={<Icons name={'exitIcon'}/>} onClick={handleClick}></Button>
+        <Button btnInner={<Icons name={'exitIcon'}/>} onClick={outRoom}></Button>
       </RoomHeader>
       <DrawContainer>
-        <Canvas ref={canvasRef} onMouseMove={handleMouseMove} onMouseDown={()=>mouseupDown(true)} onMouseUp={()=>mouseupDown(false)} onMouseOut={()=>mouseupDown(false)}></Canvas>
+        <Canvas width={500} height={500} ref={canvasRef} onMouseMove={handleMouseMove} onMouseDown={()=>handelMouseupDown(true)} onMouseUp={()=>handelMouseupDown(false)} onMouseOut={()=>handelMouseupDown(false)}></Canvas>
         <BrushBox>
-          <BrushPreview className={brushType}></BrushPreview>
           <ButtonGroup btnItems={BtnGroup} useActive={true}></ButtonGroup>
+          <Input type='range' name='brushSize' onChange={changeBrushSize} min='1' value={brushInfo.brushSize}></Input>
+          {brushInfo.brushSize} <br/>
+          <Input type='color' onChange={changeBrushColor}></Input>
         </BrushBox>
       </DrawContainer>
       <ChatContainer>
-        메세지
+        <MessageBox>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li>
+          <li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li>
+
+
+
+        </MessageBox>
+        <FormInputGroup name='message' onSubmit={handleSubmit} placeholder='메세지를 입력하세요' btnInner='전송'></FormInputGroup>
       </ChatContainer>
     </MainContainer>
   )
 }
 
 export default DrawRoomPage
-
 
 const MainContainer = styled.div`
   display: flex;
@@ -142,23 +178,21 @@ const Canvas = styled.canvas`
 const BrushBox = styled.div`
   
 `
-const BrushPreview = styled.div`
-  width: 50px;
-  height: 50px;
-  margin: auto;
-  box-sizing: border-box;
-  &.circle{
-    border-radius: 50%;
-    background-color: pink;
-  }
-  &.square, &.paint{
-    background: pink;
-  }
-  &.eraser{
-    border: 1px solid;
-  }
-`
-
 const ChatContainer = styled.div`
- 
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+`
+const MessageBox = styled.ul`
+  flex-grow: 1;
+  overflow: scroll;
+  width: 100%;
+  
+  >li{
+    padding:10px 20px;
+  }
 `
