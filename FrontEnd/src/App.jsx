@@ -18,6 +18,9 @@ function App() {
       // setNickName(nickName)
       localStorage.setItem('userNickName',nickName)
     });
+    socket.onAny((e)=>{
+      console.log('백엔드 이벤트 ' + e);
+    });
 
     return () => {
       socket.off('random-nick')

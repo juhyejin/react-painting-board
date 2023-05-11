@@ -14,7 +14,6 @@ const DrawingListPage = () => {
   const [isSearchForm, setIsSearchForm] = useState(false);
   const [isNewRoomModal, setIsNewRoomModal] = useState(false);
   const [roomList, setRoomList] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -68,13 +67,11 @@ const DrawingListPage = () => {
       }
     },
   ]
-
   const FormStyleOfFormInputGroup = {
     boxShadow: '0 1px 3px rgba(0,0,0,.25)',
     padding: '5px 20px',
     borderRadius: '10px'
   }
-
   return (
     <>
       <NewRoomModal isNewRoom={isNewRoomModal} clickClose={()=>setIsNewRoomModal(false)}></NewRoomModal>
@@ -83,7 +80,7 @@ const DrawingListPage = () => {
           isSearchForm ?
             (
               <SearchDiv>
-                <FormInputGroup btnInner='찾기' notBtn={true} name="searchValue" formStyle={FormStyleOfFormInputGroup} onSubmit={handleSubmit} onChange={handleChange}/>
+                <FormInputGroup placeholder='방 이름을 입력하세요' btnInner='찾기' notBtn={true} name="searchValue" formStyle={FormStyleOfFormInputGroup} onSubmit={handleSubmit} onChange={handleChange}/>
                 <IconBox onClick={()=>setIsSearchForm(false)}>
                   <Icons name='closeIcon'/>
                 </IconBox>

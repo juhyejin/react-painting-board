@@ -3,7 +3,7 @@ import randomNickName from "./randomNickName";
 const socketMain =  (socket, wsServer)=>{
 
   socket.onAny((e)=>{
-    console.log(e);
+    console.log('프론트 이벤트' + e);
   });
 
   socket['nickName'] =  randomNickName()
@@ -22,12 +22,16 @@ const socketMain =  (socket, wsServer)=>{
     });
     return publicRoom;
   }
+  socket.emit('random-nick',socket['nickName'])
 
+  socket.on('change-nick-name',(action)=>{
+    socket['nickName'] =  randomNickName();
+    action(socket['nickName'])
+  })
   const joinRoom = (roomName)=>{
     socket.join(roomName);
   }
 
-  socket.emit('random-nick',socket['nickName'])
   socket.on('create-room',(roomName,action)=>{
     const existenceCheck = publicRooms().indexOf(roomName)
     if(existenceCheck !== -1){
@@ -54,18 +58,26 @@ const socketMain =  (socket, wsServer)=>{
   socket.on('join-room',(roomName,action)=>{
     joinRoom(roomName)
     action()
+    socket.to(roomName).emit('new-message','system',`${socket.nickName}님이 입장하였습니다.`)
+  })
+
+  socket.on('new-message',(roomName,msg)=>{
+    socket.to(roomName).emit('new-message','other',`${socket.nickName}: ${msg}`)
   })
 
   socket.on('leave-room',(roomName)=>{
     socket.leave(roomName)
-    wsServer.sockets.emit("room-list", publicRooms());
+    socket.to(roomName).emit('new-message','system',`${socket.nickName}님이 나가셨습니다.`)
   })
 
-
-  socket.on('change-nick-name',(action)=>{
-    socket['nickName'] =  randomNickName();
-    action(socket['nickName'])
+  socket.on('other-draw',(roomName,draw)=>{
+    socket.to(roomName).emit('other-draw',draw);
   })
+
+  socket.on('brush-info',(roomName,brushInfo)=>{
+    // socket.to(roomName).emit('new-message','system',`${socket.nickName}님이 입장하였습니다.`)
+  })
+
   socket.on('disconnect',()=>{
     console.log('끝!')
   })

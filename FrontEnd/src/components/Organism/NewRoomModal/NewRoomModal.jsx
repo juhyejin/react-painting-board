@@ -36,7 +36,7 @@ const NewRoomModal = ({isNewRoom,clickClose}) => {
     <>
       {isNewRoom &&
         <Modal clickClose={clickClose}>
-          <FormInputGroup btnInner='생성'  name='roomName' onSubmit={handleSubmit} onChange={handleChange}/>
+          <FormInputGroup placeholder='방이름을 입력하세요' btnInner='생성'  name='roomName' onSubmit={handleSubmit} onChange={handleChange}/>
         </Modal>
       }
     </>

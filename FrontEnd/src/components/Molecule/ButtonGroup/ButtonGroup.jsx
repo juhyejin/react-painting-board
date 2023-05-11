@@ -3,14 +3,14 @@ import Button from "@/components/Atom/Button/Button.jsx";
 import Icons from "@/components/Atom/Icons/Icons.jsx";
 import {useState} from "react";
 
-const ButtonGroup = ({btnItems,variant, useActive,...props}) => {
+const ButtonGroup = ({btnItems,variant, useActive,activeBtn,...props}) => {
 
-  const [btnIndex, setBtnIndex] = useState(0);
+  const [btnIndex, setBtnIndex] = useState(activeBtn);
 
 
   const handleClick = (btnInfo)=>{
     if(useActive){
-      const activeBtn = btnItems.findIndex((btn)=>btn === btnInfo)
+      const activeBtn = btnItems.findIndex((btn)=> btn === btnInfo)
       setBtnIndex(activeBtn);
       btnInfo.onClick()
     }else{

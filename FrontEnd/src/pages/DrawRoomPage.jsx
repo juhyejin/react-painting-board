@@ -12,80 +12,120 @@ import useForm from "@/hooks/useForm.jsx";
 const DrawRoomPage = () => {
   const { roomName } = useParams();
   const navigate = useNavigate();
-  const [isMouseDown, setIsMouseDown] = useState(false);
   const canvasRef = useRef(null);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+
+  const [messageData, setMessageData] = useState([{
+    className: 'system',
+    msg: '입장하였습니다.'
+  }]);
+
+  const [brushInfo, setBrushInfo] = useState({
+    my_brush: {
+      brushSize : 10,
+      brushType: 'circle',
+      brushColor : '#000',
+      offsetY: 0,
+      offsetX: 0
+    }
+  });
+
+  useEffect(() => {
+    socket.on('other-draw',(brushInfo)=>{
+      draw(brushInfo)
+    })
+    return () => {
+      socket.on('other-draw',(brushInfo)=>{
+        draw(brushInfo)
+      })
+    };
+  }, []);
 
   const{ values, handleChange, handleSubmit } = useForm({
-    initValues:{
-      message:''
-    },
+    initValues:{},
     onSubmit : ()=>{
-
+      setMessageData((prevState)=>[...prevState,{
+      className: 'me',
+      msg : `${values.message}`
+    }])
+      socket.emit('new-message',roomName, values.message);
     }
   })
 
-  const [brushInfo, setBrushInfo] = useState({
-    brushSize : 10,
-    brushType : 'circle',
-    brushColor : '#000'
-  });
   useEffect(() => {
-    const canvas = canvasRef.current.getContext('2d')
-
-    canvas.lineJoin = 'round'
-    canvas.strokeStyle = brushInfo.brushColor
-    canvas.fillStyle = brushInfo.brushColor
-
-  }, [brushInfo.brushColor]);
+    const addMessage = (className,msg) =>{
+      setMessageData((prevState)=>[...prevState,{
+        className: className,
+        msg : `${msg}`
+      }])
+    }
+    socket.on('new-message',(nickName,className,msg)=>{
+      addMessage(nickName,className,msg)
+    })
+    return () => {
+      socket.off('new-message',(nickName,className,msg)=>{
+        addMessage(nickName,className,msg)
+      })
+    };
+  }, []);
   const outRoom = () =>{
     socket.emit('leave-room',roomName)
     navigate(-1)
   }
-  const handleMouseMove = (event) => {
-    const {offsetX,offsetY} = event.nativeEvent;
-
+  const draw = (brushInfo) => {
     const canvasContext = canvasRef.current.getContext("2d")
-
-    if(isMouseDown){
+      canvasContext.lineJoin = 'round'
+      canvasContext.strokeStyle = brushInfo.brushColor
+      canvasContext.fillStyle = brushInfo.brushColor
       switch (brushInfo.brushType){
         case 'circle':
           canvasContext.beginPath();
-          canvasContext.arc(offsetX, offsetY,brushInfo.brushSize/2, 0, Math.PI*2);
+          canvasContext.arc(brushInfo.offsetX, brushInfo.offsetY,brushInfo.brushSize/2, 0, Math.PI*2);
           canvasContext.closePath();
           canvasContext.fill();
           break
         case 'square' :
-          canvasContext.fillRect(offsetX - brushInfo.brushSize / 2, offsetY - brushInfo.brushSize / 2, brushInfo.brushSize, brushInfo.brushSize);
+          canvasContext.fillRect(brushInfo.offsetX - brushInfo.brushSize / 2, brushInfo.offsetY - brushInfo.brushSize / 2, brushInfo.brushSize, brushInfo.brushSize);
           break
         case 'paint' :
           canvasContext.fillRect(0,0, 500, 500);
           break
         case 'eraser':
-          canvasContext.clearRect(offsetX - brushInfo.brushSize/2,offsetY - brushInfo.brushSize/2, brushInfo.brushSize, brushInfo.brushSize);
+          canvasContext.clearRect(brushInfo.offsetX - brushInfo.brushSize/2,brushInfo.offsetY - brushInfo.brushSize/2, brushInfo.brushSize, brushInfo.brushSize);
           break
-      }
     }
   }
+
+  const changeBrushInfo = (brushInfoName,brushValue) =>{
+    setBrushInfo((prevState)=> (
+      {...prevState, my_brush:{...prevState.my_brush,[brushInfoName]:brushValue}}
+    ))
+  }
+  const handleMouseMove = (event) => {
+    const {offsetX,offsetY} = event.nativeEvent;
+    changeBrushInfo('offsetX',offsetX);
+    changeBrushInfo('offsetY',offsetY);
+    if(isMouseDown){
+      draw(brushInfo.my_brush)
+      socket.emit('other-draw',roomName,brushInfo.my_brush)
+    }
+  }
+
   const handelMouseupDown = (val) =>{
     setIsMouseDown(val)
+    socket.emit('brush-info',roomName,brushInfo)
   }
+
   const changeBrushType = (brushName)=>{
-    setBrushInfo((prevState)=>({
-      ...prevState,
-      brushType: brushName
-    }))
+    changeBrushInfo('brushType',brushName)
   }
+
   const changeBrushSize = (event) =>{
-    setBrushInfo((prevState)=>({
-      ...prevState,
-      brushSize: event.target.value
-    }))
+    changeBrushInfo('brushSize',event.target.value)
   }
+
   const changeBrushColor =(event)=>{
-    setBrushInfo((prevState)=>({
-      ...prevState,
-      brushColor: event.target.value
-    }))
+    changeBrushInfo('brushColor',event.target.value)
   }
 
   const BtnGroup = [{
@@ -117,32 +157,19 @@ const DrawRoomPage = () => {
       <DrawContainer>
         <Canvas width={500} height={500} ref={canvasRef} onMouseMove={handleMouseMove} onMouseDown={()=>handelMouseupDown(true)} onMouseUp={()=>handelMouseupDown(false)} onMouseOut={()=>handelMouseupDown(false)}></Canvas>
         <BrushBox>
-          <ButtonGroup btnItems={BtnGroup} useActive={true}></ButtonGroup>
-          <Input type='range' name='brushSize' onChange={changeBrushSize} min='1' value={brushInfo.brushSize}></Input>
-          {brushInfo.brushSize} <br/>
+          <ButtonGroup activeBtn={0} btnItems={BtnGroup} useActive={true}></ButtonGroup>
+          <Input type='range' name='brushSize' onChange={changeBrushSize} min='1' value={brushInfo.my_brush.brushSize}></Input>
+          {brushInfo.my_brush.brushSize} <br/>
           <Input type='color' onChange={changeBrushColor}></Input>
         </BrushBox>
       </DrawContainer>
       <ChatContainer>
         <MessageBox>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li>
-          <li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li><li>메세지</li>
-
-
-
+          {messageData.map((x,index)=>
+            <Message key={index} className={x.className}>{x.msg}</Message>
+          )}
         </MessageBox>
-        <FormInputGroup name='message' onSubmit={handleSubmit} placeholder='메세지를 입력하세요' btnInner='전송'></FormInputGroup>
+        <FormInputGroup name='message' onSubmit={handleSubmit} onChange={handleChange} placeholder='메세지를 입력하세요' btnInner='전송'></FormInputGroup>
       </ChatContainer>
     </MainContainer>
   )
@@ -194,5 +221,33 @@ const MessageBox = styled.ul`
   
   >li{
     padding:10px 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  
+    max-width: 300px;
+    width: fit-content;
+    border-radius: 20px;
+    word-break: keep-all;
+    word-wrap: break-word;
+  }
+`
+const Message = styled.li`
+  &.system {
+    background: #e8e8e8;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  &.me {
+    background: #c8e4ff;
+    margin-left: auto;
+    margin-right: 10px;
+  }
+
+  &.other {
+    background: pink;
+    margin-left: 10px;
   }
 `
