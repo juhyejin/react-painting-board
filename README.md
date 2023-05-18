@@ -34,4 +34,15 @@
 
 ### 페이지 및 기능
 
+#### 닉네임 변경
+![방_생성__닉네임_변경__입장_AdobeExpress (3)](https://github.com/juhyejin/react-painting-board/assets/82946898/08e267cc-92a0-4930-8e53-4fd4904c64a3)
 #### 방 생성
+![방_생성__닉네임_변경__입장_AdobeExpress (4)](https://github.com/juhyejin/react-painting-board/assets/82946898/75491386-d0fd-428e-8cb6-19fb672f08a4)
+#### 방 입장
+![방_생성__닉네임_변경__입장_AdobeExpress (6)](https://github.com/juhyejin/react-painting-board/assets/82946898/69156302-4521-464b-af07-c04eb7e934de)
+#### 그림그리기
+![그림그리기_AdobeExpress (1)](https://github.com/juhyejin/react-painting-board/assets/82946898/b302cada-28af-4848-9056-bade0f2e9968)
+#### 방 나가기
+![나가기_AdobeExpress (1)](https://github.com/juhyejin/react-painting-board/assets/82946898/f71dd7a8-33ca-4db4-87ea-49eea3b38fbe)
+#### 방 검색
+![방이름_검색_AdobeExpress (1)](https://github.com/juhyejin/react-painting-board/assets/82946898/dcd34811-2ba1-4737-b1ad-9f4390e9ef38)
